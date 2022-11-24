@@ -37,4 +37,6 @@ public:
 
 	void setLeftChild(Node* _left);
 	void setRightChild(Node* _right);
+
+	int getHeight();
 };
