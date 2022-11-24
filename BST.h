@@ -2,7 +2,6 @@
 
 #include "Node.h"
 #include "BSTInterface.h"
-#include <queue>
 
 using namespace std;
 
@@ -12,7 +11,6 @@ private:
 	bool searchAdd(Node*& root, int newData);
 	bool searchRemove(Node*& root, int oldData);
 	void recursiveClear(Node*& _root);
-	// void recursiveClear(Node*& _root, queue<Node*>& thingsToDelete);
 public:
 	BST();
 	~BST();
