@@ -59,7 +59,12 @@ bool AVL::searchAdd(Node *&current, int newData) {
         }
         else {
             Node *temp = current->getLeftChild();
-            return searchAdd(temp, newData);
+            bool status = searchAdd(temp, newData);
+            current->setLeftChild(temp);
+            if (status) {
+                restoreBalance(current);
+            }
+            return status;
         }
     }
     else {
@@ -71,7 +76,12 @@ bool AVL::searchAdd(Node *&current, int newData) {
         }
         else {
             Node *temp = current->getRightChild();
-            return searchAdd(temp, newData);
+            bool status = searchAdd(temp, newData);
+            current->setRightChild(temp);
+            if (status) {
+                restoreBalance(current);
+            }
+            return status;
         }
     }
 }
@@ -175,4 +185,95 @@ bool AVL::searchRemove(Node *&current, int oldData){
         delete deleteMe;
     }
     return true;
+}
+
+void AVL::rotateLeft(Node*& _root){
+    Node* newAp = _root->getRightChild();
+    Node* transfer = newAp->getLeftChild();
+    newAp->setLeftChild(_root);
+    _root->setRightChild(transfer);
+    _root = newAp;
+}
+
+void AVL::rotateRight(Node*& _root){
+    Node* newAp = _root->getLeftChild();
+    Node* transfer = newAp->getRightChild();
+    newAp->setRightChild(_root);
+    _root->setLeftChild(transfer);
+    _root = newAp;
+}
+
+/*
+Check Ballance:
+    0 = balanced
+    1 = left left
+    2 = left right
+    3 = right left
+    4 = right right
+*/
+int AVL::checkBalance(Node*& _root){
+    if(_root == NULL){
+        return 0;
+    }
+    int leftHeight = -1;
+    int rightHeight = -1;
+    int leftLeftHeight = -1;
+    int leftRightHeight = -1;
+    int rightLeftHeight = -1;
+    int rightRightHeight = -1;
+
+    if(_root->getLeftChild() != NULL){
+        leftHeight = _root->getLeftChild()->getHeight();
+        if(_root->getLeftChild()->getLeftChild() != NULL) leftLeftHeight = _root->getLeftChild()->getLeftChild()->getHeight();
+        if(_root->getLeftChild()->getRightChild() != NULL) leftRightHeight = _root->getLeftChild()->getRightChild()->getHeight();
+    }
+    if(_root->getRightChild()!= NULL){
+        rightHeight = _root->getRightChild()->getHeight();
+        if(_root->getRightChild()->getLeftChild() != NULL) rightLeftHeight = _root->getRightChild()->getLeftChild()->getHeight();
+        if(_root->getRightChild()->getRightChild() != NULL) rightRightHeight = _root->getRightChild()->getRightChild()->getHeight();
+    }
+
+    if(leftHeight - rightHeight > 1){
+        if(leftLeftHeight >= leftRightHeight){
+            return 1;
+        }
+        else{
+            return 2;
+        }
+    }
+    else if(rightHeight - leftHeight > 1){
+        if(rightRightHeight >= rightLeftHeight){
+            return 4;
+        }
+        else{
+            return 3;
+        }
+    }
+    else{
+        return 0;
+    }
+}
+
+void AVL::restoreBalance(Node*& _root){
+    int balance = checkBalance(_root);
+    Node* leftChild = _root->getLeftChild();
+    Node* rightChild = _root->getRightChild();
+    switch (balance){
+        case 0:
+            break;
+        case 1:
+            rotateRight(_root);
+            break;
+        case 2:
+            rotateLeft(leftChild);
+            rotateRight(_root);
+            break;
+        case 3:
+            rotateRight(rightChild);
+            rotateLeft(_root);
+            break;
+        case 4:
+            rotateLeft(_root);
+            break;
+    }
 }

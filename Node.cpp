@@ -43,13 +43,20 @@ void Node::setRightChild(Node* _right){
 }
 
 int Node::getHeight(){
-    int leftHeight = 0;
-    int rightHeight = 0;
+    int leftHeight = -1;
+    int rightHeight = -1;
     if (left != NULL){
         leftHeight = left->getHeight();
+    }
+    else{
+        leftHeight = -1;
     }
     if (right != NULL){
         rightHeight = right->getHeight();
     }
-    return max(leftHeight, rightHeight) + 1;
+    else{
+        rightHeight = -1;
+    }
+    int returnValue = 1 + max(leftHeight, rightHeight);
+    return returnValue;
 }

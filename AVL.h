@@ -11,6 +11,10 @@ private:
 	bool searchAdd(Node*& root, int newData);
 	bool searchRemove(Node*& root, int oldData);
 	void recursiveClear(Node*& _root);
+	void rotateLeft(Node*& _root);
+	void rotateRight(Node*& _root);
+	int checkBalance(Node*& _root);
+	void restoreBalance(Node*& _root);
 public:
 	AVL();
 	~AVL();
