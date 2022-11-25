@@ -109,11 +109,17 @@ bool AVL::searchRemove(Node *&current, int oldData){
     else{
         if (current->getData() > oldData){
             Node* newSearchRoot = current->getLeftChild();
-            return searchRemove(newSearchRoot, oldData);
+            bool status = searchRemove(newSearchRoot, oldData);
+            current->setLeftChild(newSearchRoot);
+            if (status) restoreBalance(current);
+            return status;
         }
         else{
             Node* newSearchRoot = current->getRightChild();
-            return searchRemove(newSearchRoot, oldData);
+            bool status = searchRemove(newSearchRoot, oldData);
+            current->setRightChild(newSearchRoot);
+            if (status) restoreBalance(current);
+            return status;
         }
     }
     
