@@ -126,9 +126,11 @@ bool AVL::searchRemove(Node *&current, int oldData){
     if(deleteMe->getLeftChild() == NULL && deleteMe -> getRightChild() == NULL){
         if (deleteLeft){
             current->setLeftChild(NULL);
+            restoreBalance(current);
         }
         else if (deleteRight){
             current->setRightChild(NULL);
+            restoreBalance(current);
         }
     }
     else if(deleteMe->getLeftChild() == NULL && deleteMe -> getRightChild() != NULL){
@@ -145,9 +147,11 @@ bool AVL::searchRemove(Node *&current, int oldData){
     else if(deleteMe->getLeftChild() != NULL && deleteMe -> getRightChild() == NULL){
         if (deleteLeft){
             current->setLeftChild(deleteMe->getLeftChild());
+            restoreBalance(current);
         }
         else if (deleteRight){
             current->setRightChild(deleteMe->getLeftChild());
+            restoreBalance(current);
         }
         else if (deleteMe == root){
             newRoot = deleteMe->getLeftChild();
@@ -165,12 +169,14 @@ bool AVL::searchRemove(Node *&current, int oldData){
                 replacementParent = replacementParent->getRightChild();
             }
         }
+
         if (replacementParent == deleteMe){
             replacementParent->setLeftChild(replacement->getLeftChild());
         }
         else{
             replacementParent->setRightChild(replacement->getLeftChild());
         }
+
         if (deleteLeft){
             current->setLeftChild(replacement);
         }
@@ -182,7 +188,12 @@ bool AVL::searchRemove(Node *&current, int oldData){
         }
         replacement->setLeftChild(deleteMe->getLeftChild());
         replacement->setRightChild(deleteMe->getRightChild());
+        restoreBalance(current);
+        if (deleteMe == root) root = newRoot;
+        if (replacementParent->getData() == deleteMe -> getData()) fixReplacement(root, replacement->getData());
+        else fixReplacement(root, replacementParent->getData());
     }
+
     if (deleteMe == root){
         delete deleteMe;
         root = newRoot;
@@ -191,6 +202,31 @@ bool AVL::searchRemove(Node *&current, int oldData){
         delete deleteMe;
     }
     return true;
+}
+
+bool AVL::fixReplacement(Node*& _root, int parentValue){
+    if (_root == NULL){
+        return false;
+    }
+    int currentData = _root->getData();
+    if (currentData == parentValue){
+        restoreBalance(_root);
+        return true;
+    }
+    else if (currentData > parentValue){
+        Node* newRoot = _root->getLeftChild();
+        bool status = fixReplacement(newRoot, parentValue);
+        _root->setLeftChild(newRoot);
+        if (status) restoreBalance(_root);
+        return status;
+    }
+    else{
+        Node* newRoot = _root->getRightChild();
+        bool status = fixReplacement(newRoot, parentValue);
+        _root->setRightChild(newRoot);
+        if (status) restoreBalance(_root);
+        return status;
+    }
 }
 
 void AVL::rotateLeft(Node*& _root){
@@ -262,6 +298,7 @@ int AVL::checkBalance(Node*& _root){
 
 void AVL::restoreBalance(Node*& _root){
     int balance = checkBalance(_root);
+    cout << "Balance of " << _root->getData() << ": " << balance << endl;
     Node* leftChild = _root->getLeftChild();
     Node* rightChild = _root->getRightChild();
     switch (balance){
@@ -272,10 +309,12 @@ void AVL::restoreBalance(Node*& _root){
             break;
         case 2:
             rotateLeft(leftChild);
+            _root->setLeftChild(leftChild);
             rotateRight(_root);
             break;
         case 3:
             rotateRight(rightChild);
+            _root->setRightChild(rightChild);
             rotateLeft(_root);
             break;
         case 4:

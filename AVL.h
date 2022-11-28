@@ -15,6 +15,7 @@ private:
 	void rotateRight(Node*& _root);
 	int checkBalance(Node*& _root);
 	void restoreBalance(Node*& _root);
+	bool fixReplacement(Node*& _root, int parentValue);
 public:
 	AVL();
 	~AVL();

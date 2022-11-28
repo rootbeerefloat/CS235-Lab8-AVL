@@ -46,17 +46,22 @@ int Node::getHeight(){
     int leftHeight = -1;
     int rightHeight = -1;
     if (left != NULL){
+        //cout << "Left child of " << data << " is " << left->getData() << ". Getting height..." << endl;
         leftHeight = left->getHeight();
+        //cout << "Got height of " << leftHeight << " for " << left->getData() << endl;
     }
     else{
         leftHeight = -1;
     }
     if (right != NULL){
+        //cout << "Right child of " << data << " is " << right->getData() << ". Getting height..." << endl;
         rightHeight = right->getHeight();
+        //cout << "Got height of " << rightHeight << " for " << right->getData() << endl;
     }
     else{
         rightHeight = -1;
     }
     int returnValue = 1 + max(leftHeight, rightHeight);
+    //cout << "Got height of " << returnValue << " for " << data << endl;
     return returnValue;
 }
