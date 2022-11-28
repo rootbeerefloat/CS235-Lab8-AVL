@@ -87,6 +87,7 @@ bool AVL::searchAdd(Node *&current, int newData) {
 }
 
 bool AVL::searchRemove(Node *&current, int oldData){
+    bool seg = true;
     if (current == NULL) {
         return false;
     }
@@ -186,12 +187,25 @@ bool AVL::searchRemove(Node *&current, int oldData){
         else if (deleteMe == root){
             newRoot = replacement;
         }
+
         replacement->setLeftChild(deleteMe->getLeftChild());
         replacement->setRightChild(deleteMe->getRightChild());
-        restoreBalance(current);
-        if (deleteMe == root) root = newRoot;
-        if (replacementParent->getData() == deleteMe -> getData()) fixReplacement(root, replacement->getData());
-        else fixReplacement(root, replacementParent->getData());
+        if (deleteMe == root) {
+            root = newRoot;
+            restoreBalance(root);
+        }
+        else {
+            restoreBalance(current);
+        }
+
+        if (replacementParent->getData() == deleteMe -> getData()) {
+            fixReplacement(root, replacement->getData());
+        }
+        else {
+            fixReplacement(root, replacementParent->getData());
+        }
+        delete deleteMe;
+        return true;
     }
 
     if (deleteMe == root){
@@ -298,7 +312,6 @@ int AVL::checkBalance(Node*& _root){
 
 void AVL::restoreBalance(Node*& _root){
     int balance = checkBalance(_root);
-    cout << "Balance of " << _root->getData() << ": " << balance << endl;
     Node* leftChild = _root->getLeftChild();
     Node* rightChild = _root->getRightChild();
     switch (balance){
